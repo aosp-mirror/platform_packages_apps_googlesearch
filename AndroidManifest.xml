@@ -25,7 +25,9 @@
         android:process="android.process.acore"
         android:label="Google Search">
         
-        <activity android:name=".GoogleSearch">
+        <activity android:name=".GoogleSearch"
+                android:theme="@android:style/Theme.NoDisplay"
+                android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />

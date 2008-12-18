@@ -16,9 +16,8 @@
 
 package com.android.googlesearch;
 
-import com.google.android.net.GoogleHttpClient;
-
 import com.android.internal.database.ArrayListCursor;
+import com.google.android.net.GoogleHttpClient;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -42,6 +41,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Use network-based Google Suggests to provide search suggestions.
@@ -54,7 +54,7 @@ public class SuggestionProvider extends ContentProvider {
             "content://com.android.googlesearch.SuggestionProvider");
 
     private static final String USER_AGENT = "Android/1.0";
-    private static final String SUGGEST_URI = "http://www.google.com/complete/search?json=true&q=";
+    private String mSuggestUri;
     private static final int HTTP_TIMEOUT_MS = 1000;
     
     // TODO: this should be defined somewhere
@@ -80,6 +80,10 @@ public class SuggestionProvider extends ContentProvider {
         mHttpClient = new GoogleHttpClient(getContext().getContentResolver(), USER_AGENT);
         HttpParams params = mHttpClient.getParams();
         params.setLongParameter(HTTP_TIMEOUT, HTTP_TIMEOUT_MS);
+
+        // NOTE:  Do not look up the resource here;  Localization changes may not have completed
+        // yet (e.g. we may still be reading the SIM card).
+        mSuggestUri = null;
         return true;
     }
     
@@ -107,7 +111,23 @@ public class SuggestionProvider extends ContentProvider {
         }
         try {
             query = URLEncoder.encode(query, "UTF-8");
-            HttpPost method = new HttpPost(SUGGEST_URI + query);
+            // NOTE:  This code uses resources to optionally select the search Uri, based on the
+            // MCC value from the SIM.  iThe default string will most likely be fine.  It is
+            // paramerterized to accept info from the Locale, the language code is the first
+            // parameter (%1$s) and the country code is the second (%2$s).  This code *must* 
+            // function in the same way as a similar lookup in
+            // com.android.browser.BrowserActivity#onCreate().  If you change
+            // either of these functions, change them both.  (The same is true for the underlying
+            // resource strings, which are stored in mcc-specific xml files.)
+            if (mSuggestUri == null) {
+                Locale l = Locale.getDefault();
+                mSuggestUri = getContext().getResources().getString(R.string.google_search_base,
+                                                                    l.getLanguage(), 
+                                                                    l.getCountry().toLowerCase()) 
+                        + "json=true&q=";
+            }
+
+            HttpPost method = new HttpPost(mSuggestUri + query);
             StringEntity content = new StringEntity("");
             method.setEntity(content);
             HttpResponse response = mHttpClient.execute(method);

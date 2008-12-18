@@ -40,6 +40,10 @@ public class GoogleSearch extends Activity {
                 Intent search = new Intent(Intent.ACTION_WEB_SEARCH);
                 search.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 search.putExtra(SearchManager.QUERY, query);
+                final Bundle appData = intent.getBundleExtra(SearchManager.APP_DATA);
+                if (appData != null) {
+                    search.putExtra(SearchManager.APP_DATA, appData);
+                }
                 startActivity(search);
             }
         }
