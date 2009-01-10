@@ -77,7 +77,8 @@ public class SuggestionProvider extends ContentProvider {
     
     @Override
     public boolean onCreate() {
-        mHttpClient = new GoogleHttpClient(getContext().getContentResolver(), USER_AGENT);
+        mHttpClient = new GoogleHttpClient(getContext().getContentResolver(),
+                USER_AGENT, false /* not gzip capable */);
         HttpParams params = mHttpClient.getParams();
         params.setLongParameter(HTTP_TIMEOUT, HTTP_TIMEOUT_MS);
 
