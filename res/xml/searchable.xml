@@ -22,7 +22,7 @@
     android:label="@string/search_label"
     android:hint='@string/search_hint'
     android:searchMode="showSearchIconAsBadge"
-    android:inputType="textSearchString"
+    android:voiceSearchMode="showVoiceSearchButton|launchWebSearch"
 
     android:searchSuggestAuthority="com.android.googlesearch.SuggestionProvider"
     android:searchSuggestSelection="field =?"
