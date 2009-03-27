@@ -69,12 +69,8 @@ public class SuggestionProvider extends ContentProvider {
             SearchManager.SUGGEST_COLUMN_TEXT_2,
             SearchManager.SUGGEST_COLUMN_QUERY};
 
-    /* Used when we have no suggestions */
-    private static final ArrayListCursor EMPTY_CURSOR = 
-        new ArrayListCursor(COLUMNS, new ArrayList());
-    
     private HttpClient mHttpClient;
-    
+
     @Override
     public boolean onCreate() {
         mHttpClient = new GoogleHttpClient(getContext().getContentResolver(),
@@ -87,7 +83,11 @@ public class SuggestionProvider extends ContentProvider {
         mSuggestUri = null;
         return true;
     }
-    
+
+    private static ArrayListCursor makeEmptyCursor() {
+        return new ArrayListCursor(COLUMNS, new ArrayList<ArrayList>());
+    }
+
     /**
      * This will always return {@link SearchManager#SUGGEST_MIME_TYPE} as this
      * provider is purely to provide suggestions.
@@ -108,7 +108,7 @@ public class SuggestionProvider extends ContentProvider {
         if (TextUtils.isEmpty(query)) {
             
             /* Can't pass back null, things blow up */
-            return EMPTY_CURSOR;
+            return makeEmptyCursor();
         }
         try {
             query = URLEncoder.encode(query, "UTF-8");
@@ -151,7 +151,7 @@ public class SuggestionProvider extends ContentProvider {
         } catch (JSONException e) {
             Log.w(LOG_TAG, "Error", e);
         }
-        return EMPTY_CURSOR;
+        return makeEmptyCursor();
     }
 
     private static class SuggestionsCursor extends AbstractCursor {
