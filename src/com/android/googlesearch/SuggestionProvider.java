@@ -122,9 +122,25 @@ public class SuggestionProvider extends ContentProvider {
             // resource strings, which are stored in mcc-specific xml files.)
             if (mSuggestUri == null) {
                 Locale l = Locale.getDefault();
+                String language = l.getLanguage();
+                String country = l.getCountry().toLowerCase();
+                // Chinese and Portuguese have two langauge variants.
+                if ("zh".equals(language)) {
+                    if ("cn".equals(country)) {
+                        language = "zh-CN";
+                    } else if ("tw".equals(country)) {
+                        language = "zh-TW";
+                    }
+                } else if ("pt".equals(language)) {
+                    if ("br".equals(country)) {
+                        language = "pt-BR";
+                    } else if ("pt".equals(country)) {
+                        language = "pt-PT";
+                    }
+                }
                 mSuggestUri = getContext().getResources().getString(R.string.google_search_base,
-                                                                    l.getLanguage(), 
-                                                                    l.getCountry().toLowerCase()) 
+                                                                    language,
+                                                                    country)
                         + "json=true&q=";
             }
 
