@@ -32,7 +32,9 @@
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <intent-filter>
+            <!-- This must be lower than the default priority (0), so that it
+                 does not clash with other global search providers. -->
+            <intent-filter android:priority="-100">
                 <action android:name="android.search.action.GLOBAL_SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
