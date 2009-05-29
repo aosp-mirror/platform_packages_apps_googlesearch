@@ -28,12 +28,12 @@ import android.text.TextUtils;
  * the global {@link Intent#ACTION_WEB_SEARCH}.
  */
 public class GoogleSearch extends Activity {
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        if ((intent != null) && Intent.ACTION_SEARCH.equals(intent.getAction())) {
+        if ((intent != null) && Intent.ACTION_WEB_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             if (!TextUtils.isEmpty(query)) {
                 // forward query to browser for Google search
