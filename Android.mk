@@ -19,6 +19,8 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE_TAGS := user # should be optional, but launcher crashes without this
 
+LOCAL_STATIC_JAVA_LIBRARIES := google-framework
+
 LOCAL_SRC_FILES := $(call all-subdir-java-files)
 
 LOCAL_PACKAGE_NAME := GoogleSearch
