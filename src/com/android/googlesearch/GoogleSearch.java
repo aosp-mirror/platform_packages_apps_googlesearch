@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -83,7 +84,10 @@ public class GoogleSearch extends Activity {
 
         try {
             String searchUri = googleSearchUrlBase + URLEncoder.encode(query, "UTF-8");
-            Intent launchUriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(searchUri));
+            Intent launchUriIntent = new Intent(Intent.ACTION_SEARCH);
+            launchUriIntent.putExtra(SearchManager.QUERY, searchUri);
+            launchUriIntent.setComponent(new ComponentName(
+                    "com.android.browser", "com.android.browser.BrowserActivity"));
             launchUriIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(launchUriIntent);
         } catch (UnsupportedEncodingException e) {
