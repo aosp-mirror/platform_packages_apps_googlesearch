@@ -42,8 +42,9 @@ public class GoogleSearch extends Activity {
     // The template URL we should use to format google search requests.
     private String googleSearchUrlBase = null;
 
-    // "source" parameter for Google search requests.
-    final static String GOOGLE_SEARCH_SOURCE_SUGGEST = "browser-suggest";
+    // "source" parameter for Google search requests from unknown sources (e.g. apps). This will get
+    // prefixed with the string 'android-' before being sent on the wire.
+    final static String GOOGLE_SEARCH_SOURCE_UNKNOWN = "unknown";
 
     /**
      * This function is the same exact one as found in
@@ -78,12 +79,20 @@ public class GoogleSearch extends Activity {
             googleSearchUrlBase = getResources().getString(
                     R.string.google_search_base, language, country)
                     + "client=ms-"
-                    + Partner.getString(this.getContentResolver(), Partner.CLIENT_ID)
-                    + "&source=android-" + GOOGLE_SEARCH_SOURCE_SUGGEST + "&q=";
+                    + Partner.getString(this.getContentResolver(), Partner.CLIENT_ID);
+        }
+
+        // If the caller specified a 'source' url parameter, use that and if not use default.
+        Bundle appSearchData = intent.getBundleExtra(SearchManager.APP_DATA);
+        String source = GOOGLE_SEARCH_SOURCE_UNKNOWN;
+        if (appSearchData != null) {
+            source = appSearchData.getString(SearchManager.SOURCE);
         }
 
         try {
-            String searchUri = googleSearchUrlBase + URLEncoder.encode(query, "UTF-8");
+            String searchUri = googleSearchUrlBase
+                    + "&source=android-" + source
+                    + "&q=" + URLEncoder.encode(query, "UTF-8");
             Intent launchUriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(searchUri));
             launchUriIntent.putExtra(Browser.EXTRA_APPEND_LOCATION, true);
             launchUriIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
