@@ -31,9 +31,12 @@ import org.json.JSONException;
 import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.AbstractCursor;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -87,10 +90,6 @@ public class SuggestionProvider extends ContentProvider {
         return true;
     }
 
-    private static ArrayListCursor makeEmptyCursor() {
-        return new ArrayListCursor(COLUMNS, new ArrayList<ArrayList>());
-    }
-
     /**
      * This will always return {@link SearchManager#SUGGEST_MIME_TYPE} as this
      * provider is purely to provide suggestions.
@@ -109,9 +108,11 @@ public class SuggestionProvider extends ContentProvider {
             String[] selectionArgs, String sortOrder) {
         String query = selectionArgs[0];
         if (TextUtils.isEmpty(query)) {
-
-            /* Can't pass back null, things blow up */
-            return makeEmptyCursor();
+            return null;
+        }
+        if (!isNetworkConnected()) {
+            Log.i(LOG_TAG, "Not connected to network.");
+            return null;
         }
         try {
             query = URLEncoder.encode(query, "UTF-8");
@@ -170,7 +171,21 @@ public class SuggestionProvider extends ContentProvider {
         } catch (JSONException e) {
             Log.w(LOG_TAG, "Error", e);
         }
-        return makeEmptyCursor();
+        return null;
+    }
+
+    private boolean isNetworkConnected() {
+        NetworkInfo networkInfo = getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
+    }
+
+    private NetworkInfo getActiveNetworkInfo() {
+        ConnectivityManager connectivity =
+                (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity == null) {
+            return null;
+        }
+        return connectivity.getActiveNetworkInfo();
     }
 
     private static class SuggestionsCursor extends AbstractCursor {
