@@ -21,6 +21,7 @@
     package="com.android.googlesearch"
     android:sharedUserId="android.uid.shared">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
