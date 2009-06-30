@@ -24,11 +24,15 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Browser;
-import android.provider.SearchRecentSuggestions;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -45,11 +49,24 @@ public class GoogleSearch extends Activity {
     // "source" parameter for Google search requests from unknown sources (e.g. apps). This will get
     // prefixed with the string 'android-' before being sent on the wire.
     final static String GOOGLE_SEARCH_SOURCE_UNKNOWN = "unknown";
+    
+    private LocationUtils mLocationUtils;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mLocationUtils = LocationUtils.getLocationUtils(this);
+        Intent intent = getIntent();
+        if ((intent != null) && Intent.ACTION_WEB_SEARCH.equals(intent.getAction())) {
+            handleWebSearchIntent(intent);
+        }
+        finish();
+    }
 
     /**
-     * This function is the same exact one as found in
-     * com.google.android.providers.genie.GenieLauncher. If you are changing this make sure you
-     * change both.
+     * NOTE: This function is similar to the one found in
+     * com.google.android.providers.enhancedgooglesearch.Launcher. If you are changing this
+     * make sure you change both.
      */
     private void handleWebSearchIntent(Intent intent) {
         String query = intent.getStringExtra(SearchManager.QUERY);
@@ -94,21 +111,36 @@ public class GoogleSearch extends Activity {
                     + "&source=android-" + source
                     + "&q=" + URLEncoder.encode(query, "UTF-8");
             Intent launchUriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(searchUri));
-            launchUriIntent.putExtra(Browser.EXTRA_APPEND_LOCATION, true);
+            launchUriIntent.putExtra(Browser.EXTRA_POST_DATA, getLocationData());
             launchUriIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(launchUriIntent);
         } catch (UnsupportedEncodingException e) {
             Log.w(TAG, "Error", e);
         }
     }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-        if ((intent != null) && Intent.ACTION_WEB_SEARCH.equals(intent.getAction())) {
-            handleWebSearchIntent(intent);
+    
+    private byte[] getLocationData() {
+        byte[] postData = null;
+        ContentResolver cr = getContentResolver();
+        
+        // Don't send any location if the system does not have GoogleSettingsProvider.
+        if (!mLocationUtils.systemHasGoogleSettingsProvider()) return postData;
+        
+        if (!mLocationUtils.userRespondedToLocationOptIn()) {
+            // Bring up the consent dialog if it the user has yet responded to it. We
+            // will not send the location info for this query.
+            mLocationUtils.showLocationOptIn();
+        } else if (mLocationUtils.userAcceptedLocationOptIn() &&
+                Settings.Secure.isLocationProviderEnabled(cr, LocationManager.NETWORK_PROVIDER)) {
+            Location location = ((LocationManager) getSystemService(
+                    Context.LOCATION_SERVICE)).getLastKnownLocation(
+                            LocationManager.NETWORK_PROVIDER);
+            if (location != null) {
+                StringBuilder str = new StringBuilder("action=devloc&sll=");
+                str.append(location.getLatitude()).append(',').append(location.getLongitude());
+                postData = str.toString().getBytes();
+            }
         }
-        finish();
+        return postData;
     }
 }
