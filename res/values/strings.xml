@@ -15,8 +15,11 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <!-- Do not translate.  This string is not displayed in UI (because we have a badge icon). -->
+    <!-- Search source name as displayed in the search dialog. -->
     <string name="search_label">Google</string>
+
+    <!-- The app label as shown, for example, in 'manage applications'. -->
+    <string name="app_label">Google Search</string>
 
     <!-- This is the hint text shown in the search widget, before text is entered. -->
     <!-- This translation MUST MATCH the string "search_hint" which is found in
