@@ -16,7 +16,6 @@
 
 package com.android.googlesearch;
 
-import com.android.internal.database.ArrayListCursor;
 import com.google.android.net.GoogleHttpClient;
 
 import org.apache.http.HttpResponse;
@@ -32,7 +31,6 @@ import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -44,7 +42,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -54,8 +51,7 @@ import java.util.Locale;
  */
 public class SuggestionProvider extends ContentProvider {
 
-    public static final Uri CONTENT_URI = Uri.parse(
-            "content://com.android.googlesearch.SuggestionProvider");
+    private static final String LOG_TAG = "GoogleSearch";
 
     private static final String USER_AGENT = "Android/1.0";
     private String mSuggestUri;
@@ -64,23 +60,32 @@ public class SuggestionProvider extends ContentProvider {
     // TODO: this should be defined somewhere
     private static final String HTTP_TIMEOUT = "http.connection-manager.timeout";
 
-    private static final String LOG_TAG = "GoogleSearch.SuggestionProvider";
+    private static final String SUGGESTION_ICON =
+            "android.resource://com.android.googlesearch/" + R.drawable.magnifying_glass;
+
+    // Indexes into COLUMNS
+    private static final int COL_ID = 0;
+    private static final int COL_TEXT_1 = 1;
+    private static final int COL_TEXT_2 = 2;
+    private static final int COL_ICON_1 = 3;
+    private static final int COL_ICON_2 = 4;
+    private static final int COL_QUERY = 5;
 
     /* The suggestion columns used */
     private static final String[] COLUMNS = new String[] {
         "_id",
         SearchManager.SUGGEST_COLUMN_TEXT_1,
         SearchManager.SUGGEST_COLUMN_TEXT_2,
-        SearchManager.SUGGEST_COLUMN_QUERY,
-        SearchManager.SUGGEST_COLUMN_INTENT_ACTION,
+        SearchManager.SUGGEST_COLUMN_ICON_1,
+        SearchManager.SUGGEST_COLUMN_ICON_2,
+        SearchManager.SUGGEST_COLUMN_QUERY
     };
 
     private HttpClient mHttpClient;
 
     @Override
     public boolean onCreate() {
-        mHttpClient = new GoogleHttpClient(getContext().getContentResolver(),
-                USER_AGENT, false /* not gzip capable */);
+        mHttpClient = new GoogleHttpClient(getContext(), USER_AGENT, false /* not gzip capable */);
         HttpParams params = mHttpClient.getParams();
         params.setLongParameter(HTTP_TIMEOUT, HTTP_TIMEOUT_MS);
 
@@ -214,24 +219,29 @@ public class SuggestionProvider extends ContentProvider {
 
         @Override
         public String getString(int column) {
-            if ((mPos != -1)) {
-                if ((column == 1) || (column == 3)) {
-                    try {
+            if (mPos == -1) return null;
+            try {
+                switch (column) {
+                    case COL_ID:
+                        return String.valueOf(mPos);
+                    case COL_TEXT_1:
+                    case COL_QUERY:
                         return mSuggestions.getString(mPos);
-                    } catch (JSONException e) {
-                        Log.w(LOG_TAG, "Error", e);
-                    }
-                } else if (column == 2) {
-                    try {
+                    case COL_TEXT_2:
                         return mPopularity.getString(mPos);
-                    } catch (JSONException e) {
-                        Log.w(LOG_TAG, "Error", e);
-                    }
-                } else if (column == 4) {
-                    return Intent.ACTION_WEB_SEARCH;
+                    case COL_ICON_1:
+                        return SUGGESTION_ICON;
+                    case COL_ICON_2:
+                        return null;
+                    default:
+                        Log.w(LOG_TAG, "Bad column: " + column);
+                        return null;
                 }
+            } catch (JSONException e) {
+                Log.w(LOG_TAG, "Error parsing response: " + e);
+                return null;
             }
-            return null;
+
         }
 
         @Override
@@ -251,7 +261,7 @@ public class SuggestionProvider extends ContentProvider {
 
         @Override
         public long getLong(int column) {
-            if (column == 0) {
+            if (column == COL_ID) {
                 return mPos;        // use row# as the _Id
             }
             throw new UnsupportedOperationException();

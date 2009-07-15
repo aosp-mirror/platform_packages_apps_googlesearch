@@ -26,4 +26,5 @@
 
     android:searchSuggestAuthority="com.android.googlesearch.SuggestionProvider"
     android:searchSuggestSelection="field =?"
+    android:searchSuggestIntentAction="android.intent.action.WEB_SEARCH"
 />
