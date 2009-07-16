@@ -26,7 +26,8 @@
 
     <application
         android:process="android.process.acore"
-        android:label="@string/app_label">
+        android:label="@string/app_label"
+        android:icon="@drawable/google">
 
         <activity android:name=".GoogleSearch"
                 android:label="@string/search_label"
