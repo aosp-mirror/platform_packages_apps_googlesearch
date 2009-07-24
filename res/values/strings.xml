@@ -26,6 +26,14 @@
          Home/res/values/strings.xml -->
     <string name="search_hint">Google Search</string>
 
+    <!-- Settings category title for 'Google search settings' settings activity -->
+    <string name="google_search_settings">Google search settings</string>
+
+    <!-- Title and summaries for 'show web suggestions' check box setting -->
+    <string name="show_web_suggestions">Show web suggestions</string>
+    <string name="show_web_suggestions_summary_enabled">Show suggestions from Google as you type</string>
+    <string name="show_web_suggestions_summary_disabled">Don\'t show suggestions from Google as you type</string>
+
     <!-- Note that this is the standard search url.  It uses the current locale for language -->
     <!-- (%1$s) and country (%2$s) and shouldn't need to be replaced by locale or mcc selected -->
     <!-- resources. -->
