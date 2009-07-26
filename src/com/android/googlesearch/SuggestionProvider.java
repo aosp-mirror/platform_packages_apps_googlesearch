@@ -31,8 +31,12 @@ import org.json.JSONException;
 import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
 import android.database.AbstractCursor;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -45,29 +49,31 @@ import java.util.Locale;
 
 /**
  * Use network-based Google Suggests to provide search suggestions.
- * 
+ *
  * Future:  Merge live suggestions with saved recent queries
  */
 public class SuggestionProvider extends ContentProvider {
-    
+
     public static final Uri CONTENT_URI = Uri.parse(
             "content://com.android.googlesearch.SuggestionProvider");
 
     private static final String USER_AGENT = "Android/1.0";
     private String mSuggestUri;
     private static final int HTTP_TIMEOUT_MS = 1000;
-    
+
     // TODO: this should be defined somewhere
     private static final String HTTP_TIMEOUT = "http.connection-manager.timeout";
 
     private static final String LOG_TAG = "GoogleSearch.SuggestionProvider";
-    
+
     /* The suggestion columns used */
     private static final String[] COLUMNS = new String[] {
-            "_id",
-            SearchManager.SUGGEST_COLUMN_TEXT_1,
-            SearchManager.SUGGEST_COLUMN_TEXT_2,
-            SearchManager.SUGGEST_COLUMN_QUERY};
+        "_id",
+        SearchManager.SUGGEST_COLUMN_TEXT_1,
+        SearchManager.SUGGEST_COLUMN_TEXT_2,
+        SearchManager.SUGGEST_COLUMN_QUERY,
+        SearchManager.SUGGEST_COLUMN_INTENT_ACTION,
+    };
 
     private HttpClient mHttpClient;
 
@@ -82,10 +88,6 @@ public class SuggestionProvider extends ContentProvider {
         // yet (e.g. we may still be reading the SIM card).
         mSuggestUri = null;
         return true;
-    }
-
-    private static ArrayListCursor makeEmptyCursor() {
-        return new ArrayListCursor(COLUMNS, new ArrayList<ArrayList>());
     }
 
     /**
@@ -106,25 +108,43 @@ public class SuggestionProvider extends ContentProvider {
             String[] selectionArgs, String sortOrder) {
         String query = selectionArgs[0];
         if (TextUtils.isEmpty(query)) {
-            
-            /* Can't pass back null, things blow up */
-            return makeEmptyCursor();
+            return null;
+        }
+        if (!isNetworkConnected()) {
+            Log.i(LOG_TAG, "Not connected to network.");
+            return null;
         }
         try {
             query = URLEncoder.encode(query, "UTF-8");
             // NOTE:  This code uses resources to optionally select the search Uri, based on the
             // MCC value from the SIM.  iThe default string will most likely be fine.  It is
             // paramerterized to accept info from the Locale, the language code is the first
-            // parameter (%1$s) and the country code is the second (%2$s).  This code *must* 
+            // parameter (%1$s) and the country code is the second (%2$s).  This code *must*
             // function in the same way as a similar lookup in
             // com.android.browser.BrowserActivity#onCreate().  If you change
             // either of these functions, change them both.  (The same is true for the underlying
             // resource strings, which are stored in mcc-specific xml files.)
             if (mSuggestUri == null) {
                 Locale l = Locale.getDefault();
-                mSuggestUri = getContext().getResources().getString(R.string.google_search_base,
-                                                                    l.getLanguage(), 
-                                                                    l.getCountry().toLowerCase()) 
+                String language = l.getLanguage();
+                String country = l.getCountry().toLowerCase();
+                // Chinese and Portuguese have two langauge variants.
+                if ("zh".equals(language)) {
+                    if ("cn".equals(country)) {
+                        language = "zh-CN";
+                    } else if ("tw".equals(country)) {
+                        language = "zh-TW";
+                    }
+                } else if ("pt".equals(language)) {
+                    if ("br".equals(country)) {
+                        language = "pt-BR";
+                    } else if ("pt".equals(country)) {
+                        language = "pt-PT";
+                    }
+                }
+                mSuggestUri = getContext().getResources().getString(R.string.google_suggest_base,
+                                                                    language,
+                                                                    country)
                         + "json=true&q=";
             }
 
@@ -133,7 +153,7 @@ public class SuggestionProvider extends ContentProvider {
             method.setEntity(content);
             HttpResponse response = mHttpClient.execute(method);
             if (response.getStatusLine().getStatusCode() == 200) {
-                
+
                 /* Goto http://www.google.com/complete/search?json=true&q=foo
                  * to see what the data format looks like. It's basically a json
                  * array containing 4 other arrays. We only care about the middle
@@ -151,14 +171,28 @@ public class SuggestionProvider extends ContentProvider {
         } catch (JSONException e) {
             Log.w(LOG_TAG, "Error", e);
         }
-        return makeEmptyCursor();
+        return null;
+    }
+
+    private boolean isNetworkConnected() {
+        NetworkInfo networkInfo = getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
+    }
+
+    private NetworkInfo getActiveNetworkInfo() {
+        ConnectivityManager connectivity =
+                (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity == null) {
+            return null;
+        }
+        return connectivity.getActiveNetworkInfo();
     }
 
     private static class SuggestionsCursor extends AbstractCursor {
 
         /* Contains the actual suggestions */
         final JSONArray mSuggestions;
-        
+
         /* This contains the popularity of each suggestion
          * i.e. 165,000 results. It's not related to sorting.
          */
@@ -193,6 +227,8 @@ public class SuggestionProvider extends ContentProvider {
                     } catch (JSONException e) {
                         Log.w(LOG_TAG, "Error", e);
                     }
+                } else if (column == 4) {
+                    return Intent.ACTION_WEB_SEARCH;
                 }
             }
             return null;
@@ -231,7 +267,7 @@ public class SuggestionProvider extends ContentProvider {
             throw new UnsupportedOperationException();
         }
     }
-    
+
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         throw new UnsupportedOperationException();

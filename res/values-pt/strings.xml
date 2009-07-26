@@ -15,10 +15,5 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="search_hint">"Google 搜索"</string>
-
-    <!-- China has a different url than the standard suggest url. -->
-    <!-- Do not translate.  This string is an internal URI, not seen in the UI. -->
-    <string name="google_search_base" translatable="false">
-        http://www.google.cn/complete/search?hl=%1$s&amp;gl=%2$s&amp;</string>
+    <string name="search_hint">"Pesquisa do Google"</string>
 </resources>
