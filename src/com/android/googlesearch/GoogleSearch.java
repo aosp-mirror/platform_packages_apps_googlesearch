@@ -57,7 +57,8 @@ public class GoogleSearch extends Activity {
         super.onCreate(savedInstanceState);
         mLocationUtils = LocationUtils.getLocationUtils(this);
         Intent intent = getIntent();
-        if ((intent != null) && Intent.ACTION_WEB_SEARCH.equals(intent.getAction())) {
+        String action = intent != null ? intent.getAction() : null;
+        if (Intent.ACTION_WEB_SEARCH.equals(action) || Intent.ACTION_SEARCH.equals(action)) {
             handleWebSearchIntent(intent);
         }
         finish();
