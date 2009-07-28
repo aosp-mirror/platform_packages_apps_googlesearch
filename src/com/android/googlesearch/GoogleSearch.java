@@ -106,12 +106,20 @@ public class GoogleSearch extends Activity {
         if (appSearchData != null) {
             source = appSearchData.getString(SearchManager.SOURCE);
         }
+        
+        // The browser can pass along an application id which it uses to figure out which
+        // window to place a new search into. So if this exists, we'll pass it back to
+        // the browser.
+        String applicationId = intent.getStringExtra(Browser.EXTRA_APPLICATION_ID);
 
         try {
             String searchUri = googleSearchUrlBase
                     + "&source=android-" + source
                     + "&q=" + URLEncoder.encode(query, "UTF-8");
             Intent launchUriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(searchUri));
+            if (applicationId != null) {
+                launchUriIntent.putExtra(Browser.EXTRA_APPLICATION_ID, applicationId);
+            }
             launchUriIntent.putExtra(Browser.EXTRA_POST_DATA, getLocationData());
             launchUriIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(launchUriIntent);
