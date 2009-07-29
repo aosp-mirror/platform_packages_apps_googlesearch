@@ -26,9 +26,11 @@
 
     <application
         android:process="android.process.acore"
-        android:label="@string/search_label">
+        android:label="@string/app_label"
+        android:icon="@drawable/google">
 
         <activity android:name=".GoogleSearch"
+                android:label="@string/search_label"
                 android:theme="@android:style/Theme.NoDisplay"
                 android:excludeFromRecents="true">
             <intent-filter>
@@ -50,6 +52,7 @@
         </activity>
 
         <provider android:name=".SuggestionProvider"
+            android:label="@string/search_label"
             android:authorities="com.android.googlesearch.SuggestionProvider" />
 
         <meta-data android:name="android.app.default_searchable"
