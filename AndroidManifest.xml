@@ -51,6 +51,14 @@
                 android:resource="@xml/searchable" />
         </activity>
 
+        <activity android:name=".Settings"
+                android:label="@string/google_search_settings"
+                android:excludeFromRecents="true">
+            <intent-filter>
+                <action android:name="android.search.action.WEB_SEARCH_SETTINGS" />
+            </intent-filter>
+        </activity>
+
         <provider android:name=".SuggestionProvider"
             android:label="@string/search_label"
             android:authorities="com.android.googlesearch.SuggestionProvider" />

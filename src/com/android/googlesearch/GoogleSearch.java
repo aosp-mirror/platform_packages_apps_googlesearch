@@ -57,7 +57,8 @@ public class GoogleSearch extends Activity {
         super.onCreate(savedInstanceState);
         mLocationUtils = LocationUtils.getLocationUtils(this);
         Intent intent = getIntent();
-        if ((intent != null) && Intent.ACTION_WEB_SEARCH.equals(intent.getAction())) {
+        String action = intent != null ? intent.getAction() : null;
+        if (Intent.ACTION_WEB_SEARCH.equals(action) || Intent.ACTION_SEARCH.equals(action)) {
             handleWebSearchIntent(intent);
         }
         finish();
@@ -105,12 +106,22 @@ public class GoogleSearch extends Activity {
         if (appSearchData != null) {
             source = appSearchData.getString(SearchManager.SOURCE);
         }
+        
+        // The browser can pass along an application id which it uses to figure out which
+        // window to place a new search into. So if this exists, we'll pass it back to
+        // the browser. Otherwise, add our own package name as the application id, so that
+        // the browser can organize all searches launched from this provider together.
+        String applicationId = intent.getStringExtra(Browser.EXTRA_APPLICATION_ID);
+        if (applicationId == null) {
+            applicationId = getPackageName();
+        }
 
         try {
             String searchUri = googleSearchUrlBase
                     + "&source=android-" + source
                     + "&q=" + URLEncoder.encode(query, "UTF-8");
             Intent launchUriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(searchUri));
+            launchUriIntent.putExtra(Browser.EXTRA_APPLICATION_ID, applicationId);
             launchUriIntent.putExtra(Browser.EXTRA_POST_DATA, getLocationData());
             launchUriIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(launchUriIntent);
