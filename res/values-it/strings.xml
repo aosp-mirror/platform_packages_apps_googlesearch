@@ -18,12 +18,8 @@
     <string name="search_label" msgid="2069543354985658833">"Google"</string>
     <string name="app_label" msgid="3580048106450818944">"Google Search"</string>
     <string name="search_hint" msgid="6440085784357793548">"Ricerca Google"</string>
-    <!-- no translation found for google_search_settings (365464319956526869) -->
-    <skip />
-    <!-- no translation found for show_web_suggestions (1388747783064440982) -->
-    <skip />
-    <!-- no translation found for show_web_suggestions_summary_enabled (8167203294868314435) -->
-    <skip />
-    <!-- no translation found for show_web_suggestions_summary_disabled (8530099720012658503) -->
-    <skip />
+    <string name="google_search_settings" msgid="365464319956526869">"Impostazioni ricerca Google"</string>
+    <string name="show_web_suggestions" msgid="1388747783064440982">"Mostra suggerimenti web"</string>
+    <string name="show_web_suggestions_summary_enabled" msgid="8167203294868314435">"Mostra suggerimenti da Google durante la digitazione"</string>
+    <string name="show_web_suggestions_summary_disabled" msgid="8530099720012658503">"Non mostrare suggerimenti da Google durante la digitazione"</string>
 </resources>
