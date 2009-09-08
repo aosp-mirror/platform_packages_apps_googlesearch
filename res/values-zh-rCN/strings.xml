@@ -15,5 +15,17 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="search_hint">"Google 搜索"</string>
+    <!-- no translation found for search_label (2069543354985658833) -->
+    <skip />
+    <!-- no translation found for app_label (3580048106450818944) -->
+    <skip />
+    <string name="search_hint" msgid="6440085784357793548">"Google 搜索"</string>
+    <!-- no translation found for google_search_settings (365464319956526869) -->
+    <skip />
+    <!-- no translation found for show_web_suggestions (1388747783064440982) -->
+    <skip />
+    <!-- no translation found for show_web_suggestions_summary_enabled (8167203294868314435) -->
+    <skip />
+    <!-- no translation found for show_web_suggestions_summary_disabled (8530099720012658503) -->
+    <skip />
 </resources>
