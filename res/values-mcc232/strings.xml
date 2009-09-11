@@ -23,6 +23,6 @@
     <!-- Any changes to this (especially in terms of adding/removing the MCC-specific flavors) -->
     <!-- should be mirrored by changes in apps/Browser. -->
     <!-- Do not translate.  This string is an internal URI, not seen in the UI. -->
-    <string name="google_search_base" translatable="false">
+    <string name="google_suggest_base" translatable="false">
         http://www.google.com/complete/search?hl=%1$s&amp;gl=at&amp;</string>
 </resources>
