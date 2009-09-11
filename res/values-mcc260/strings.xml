@@ -23,5 +23,5 @@
     <!-- don't support this countries locale.  -->
     <!-- Any changes to this (especially in terms of adding/removing the MCC-specific flavors) -->
     <!-- should be mirrored by changes in apps/Browser. -->
-    <string translatable="false" name="google_search_base">http://www.google.com/complete/search?hl=%1$s&amp;gl=pl&amp;</string>
+    <string translatable="false" name="google_suggest_base">http://www.google.com/complete/search?hl=%1$s&amp;gl=pl&amp;</string>
 </resources>
