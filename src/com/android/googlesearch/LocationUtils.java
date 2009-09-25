@@ -71,13 +71,13 @@ public class LocationUtils {
     
     /**
      * Shows the location opt-in because the user has not yet responded to it. If
-     * we have GoogleSettingsProvider, this fires up the 'security & location' settings
+     * we have GoogleSettingsProvider, this fires up the 'privacy' settings
      * and requests to show the opt-in. If we do not, this does nothing.
      */
     public void showLocationOptIn() {
         if (systemHasGoogleSettingsProvider()) {
             Intent consent = new Intent(
-                    android.provider.Settings.ACTION_SECURITY_SETTINGS);
+                    android.provider.Settings.ACTION_PRIVACY_SETTINGS);
             consent.putExtra("SHOW_USE_LOCATION", true);
             consent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(consent);
