@@ -15,17 +15,11 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- no translation found for search_label (2069543354985658833) -->
-    <skip />
-    <!-- no translation found for app_label (3580048106450818944) -->
-    <skip />
+    <string name="search_label" msgid="2069543354985658833">"Google"</string>
+    <string name="app_label" msgid="3580048106450818944">"Google 搜索"</string>
     <string name="search_hint" msgid="6440085784357793548">"Google 搜索"</string>
-    <!-- no translation found for google_search_settings (365464319956526869) -->
-    <skip />
-    <!-- no translation found for show_web_suggestions (1388747783064440982) -->
-    <skip />
-    <!-- no translation found for show_web_suggestions_summary_enabled (8167203294868314435) -->
-    <skip />
-    <!-- no translation found for show_web_suggestions_summary_disabled (8530099720012658503) -->
-    <skip />
+    <string name="google_search_settings" msgid="365464319956526869">"Google 搜索设置"</string>
+    <string name="show_web_suggestions" msgid="1388747783064440982">"显示网络建议"</string>
+    <string name="show_web_suggestions_summary_enabled" msgid="8167203294868314435">"键入时显示 Google 提供的建议"</string>
+    <string name="show_web_suggestions_summary_disabled" msgid="8530099720012658503">"键入时不显示 Google 提供的建议"</string>
 </resources>
