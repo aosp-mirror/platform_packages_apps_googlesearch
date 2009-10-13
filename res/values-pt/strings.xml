@@ -19,7 +19,7 @@
     <string name="app_label" msgid="3580048106450818944">"Pesquisa do Google"</string>
     <string name="search_hint" msgid="6440085784357793548">"Pesquisa do Google"</string>
     <string name="google_search_settings" msgid="365464319956526869">"Configurações de pesquisa do Google"</string>
-    <string name="show_web_suggestions" msgid="1388747783064440982">"Mostrar sugestões da web"</string>
+    <string name="show_web_suggestions" msgid="1388747783064440982">"Sugestões da web"</string>
     <string name="show_web_suggestions_summary_enabled" msgid="8167203294868314435">"Mostrar sugestões do Google enquanto você digita"</string>
     <string name="show_web_suggestions_summary_disabled" msgid="8530099720012658503">"Não mostrar sugestões do Google enquanto você digita"</string>
 </resources>
