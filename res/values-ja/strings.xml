@@ -20,6 +20,6 @@
     <string name="search_hint" msgid="6440085784357793548">"Google検索"</string>
     <string name="google_search_settings" msgid="365464319956526869">"Google検索の設定"</string>
     <string name="show_web_suggestions" msgid="1388747783064440982">"検索候補の表示"</string>
-    <string name="show_web_suggestions_summary_enabled" msgid="8167203294868314435">"入力時にGoogleの入力候補を表示します"</string>
-    <string name="show_web_suggestions_summary_disabled" msgid="8530099720012658503">"入力時にGoogleの入力候補を表示しません"</string>
+    <string name="show_web_suggestions_summary_enabled" msgid="8167203294868314435">"入力時にGoogleの入力候補を表示する"</string>
+    <string name="show_web_suggestions_summary_disabled" msgid="8530099720012658503">"入力時にGoogleの入力候補を表示しない"</string>
 </resources>
