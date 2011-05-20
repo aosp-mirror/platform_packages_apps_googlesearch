@@ -1,0 +1,8 @@
+Change-Id: Ia67ae512b10c06cd88133ecb21d67ec79c1488dd
+Code-Review+2: Jean-Baptiste Queru <jbq@google.com>
+Verified+1: Jean-Baptiste Queru <jbq@google.com>
+Submitted-by: Jean-Baptiste Queru <jbq@google.com>
+Submitted-at: Wed, 18 Mar 2009 13:56:49 -0700
+Reviewed-on: https://review.source.android.com/9186
+Project: platform/packages/apps/GoogleSearch
+Branch: refs/heads/master
